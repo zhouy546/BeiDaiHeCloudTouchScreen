@@ -20,7 +20,7 @@ public class ParticleBG : MonoBehaviour {
         }
         else if(Input.GetMouseButtonDown(1)) {
             AddForce(-8, curveLEFT);
-            LerpSpeed(10, 0.01f, 2f);
+          LerpSpeed(10, 0.01f, 2f);
         }
     }
 
