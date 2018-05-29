@@ -1,41 +1,67 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ScreenUnlocker : MonoBehaviour {
     public delegate void UnlockScreen();
     public static event UnlockScreen BeginUnlockScreenEvent;
+    public static event UnlockScreen InbetweenUnlockScreenEvent;
     public static event UnlockScreen EndUnlockScreenEvent;
+
+
+    public float TextHideDelay, TextPosOffset, EndUnlockTrigerDelayTime,LoopRingDelay;
 
     public Image ShineMaterialimg;
     public Color ShineColor;
     public List<Image> LoopImageList;
     public Text UnlockScreenText;
+    public Image ImgScaner;
+
+    private List<Image> DisplayImages ;
 
     private string[] UnlockText = { "触摸解锁", "屏幕已解锁" };
+    private Vector3 Textstartpos, Texttarget;
     private float ShineIntensity;
+
     LTDescr a;
+
+
+    void SubScribe() {
+        BeginUnlockScreenEvent += mUnlockScreen;
+        BeginUnlockScreenEvent += mHideText;
+        InbetweenUnlockScreenEvent += mShowText;
+        EndUnlockScreenEvent += mHideLockerScreen;
+        EndUnlockScreenEvent += mHideText;
+
+    }
+
+    void UnSubScribe() {
+        BeginUnlockScreenEvent -= mUnlockScreen;
+        BeginUnlockScreenEvent -= mHideText;
+        InbetweenUnlockScreenEvent -= mShowText;
+        EndUnlockScreenEvent -= mHideLockerScreen;
+        EndUnlockScreenEvent -= mHideText;
+    }
+
     private void OnEnable()
     {
-        BeginUnlockScreenEvent += mUnlockScreen;
-        BeginUnlockScreenEvent += mSwapeText;
-        EndUnlockScreenEvent += mShowMainDisplay;
+        SubScribe();
     }
 
 
     private void OnDisable()
     {
-        BeginUnlockScreenEvent -= mUnlockScreen;
-        BeginUnlockScreenEvent -= mSwapeText;
-        EndUnlockScreenEvent -= mShowMainDisplay;
-
+        UnSubScribe();
     }
 
     //initialize event
     public void mBeginUnlockScreenEvent()
     {
+        Debug.Log("开始解锁屏幕被调用");
+
         if (BeginUnlockScreenEvent != null)
         {
             BeginUnlockScreenEvent();
@@ -45,7 +71,7 @@ public class ScreenUnlocker : MonoBehaviour {
 
     public void mEndUnlockScreenEvent()
     {
-        Debug.Log("show mEndUnlockScreenEvent 被调用");
+        Debug.Log("结束解锁被调用");
 
         if (EndUnlockScreenEvent != null)
         {
@@ -54,27 +80,90 @@ public class ScreenUnlocker : MonoBehaviour {
     }
 
 
+    public void mInbetweenUnlockScreenEvent()
+    {
+        Debug.Log("解锁中被调用");
+
+        if (EndUnlockScreenEvent != null)
+        {
+            InbetweenUnlockScreenEvent();
+        }
+    }
+
 
     // Use this for initialization
     void Start () {
+        Textstartpos = UnlockScreenText.transform.localPosition;
+
         hoverUnlock();
-
+        DisplayImages = UtilityFun.instance.GetDisplayImage(this.gameObject, LoopImageList);
     }
 
 
-    void mShowMainDisplay() {
-        Debug.Log("show mainDisplay");
+    //    隐藏UI界面  订阅EndUnlockScreenEvent结束锁屏事件
+    void mHideLockerScreen() {
+        UtilityFun.instance.ChangeListOfImageAlpha(DisplayImages, 0,.5f);
+        UtilityFun.instance.ChangeShineIntensity(ref ShineIntensity, 0f,.5f, ShineColor, ShineMaterialimg);
     }
 
+    //向上移动SCANER
+    void mMoveScanerUp(Image image,float time) {
+        float target = (image.rectTransform.rect.width - image.rectTransform.rect.height)/2;
+        Vector3 pos = new Vector3(image.transform.localPosition.x, target, image.transform.localPosition.x);
 
+        LeanTween.moveLocal(image.gameObject, pos, time).setOnUpdate( (float value)=>{
+            scanerAlpha(image, value);
+        }).setOnComplete(()=> mMoveScanerDown(time));
+    }
 
+    //向下移动SCANER
+    void mMoveScanerDown(float time)
+    {
+        //触发inbetween事件
+
+        mInbetweenUnlockScreenEvent();
+
+        float target = -ImgScaner.rectTransform.rect.width/ 2;
+        Vector3 pos = new Vector3(ImgScaner.transform.localPosition.x, target, ImgScaner.transform.localPosition.x);
+        //SCANER开始向下运动
+        LeanTween.moveLocal(ImgScaner.gameObject, pos,time ).setOnUpdate((float value) => {
+
+            float newvalue = 1 - value;
+            scanerAlpha(ImgScaner, newvalue);
+        }).setOnComplete(delegate() {
+            //出发结束锁屏事件
+            mEndUnlockScreenEvent();
+            });
+    }
+
+    //设置SCANER透明度
+    void scanerAlpha(Image img, float value)
+    {
+        float instensity = 3;
+        Color color = new Color(img.color.r, img.color.g, img.color.b, value);
+        img.color = color;
+
+        Color HDRcolor = new Color(img.color.r * value * instensity, img.color.g * value * instensity, img.color.b * value * instensity, img.color.a * value * instensity);
+        img.material.SetColor("_OutlineColor", HDRcolor);
+    }
+
+    //开始解锁屏幕 订阅BeginUnlockScreenEvent
     void mUnlockScreen() {
-        StartCoroutine(changeRingAlpha(0, 1, .2f, LoopImageList));
+        StartCoroutine(changeRingAlpha(0, 1, LoopRingDelay, LoopImageList));
         ShineUnlock();
+        mMoveScanerUp(ImgScaner, 1.5f);
+
     }
 
-    void mSwapeText() {
-        MoveText(UnlockScreenText,60f);
+    void mHideText() {
+        Debug.Log("隐藏文字");
+        MovingText(UnlockScreenText, TextPosOffset, true, TextHideDelay);
+    }
+
+    void mShowText() {
+        Debug.Log("显示文字");
+        UnlockScreenText.text = UnlockText[1];
+        MovingText(UnlockScreenText, TextPosOffset, false);
     }
 
     // Update is called once per frame
@@ -82,41 +171,35 @@ public class ScreenUnlocker : MonoBehaviour {
         if (Input.GetMouseButtonDown(2)) {
             mBeginUnlockScreenEvent();
         }
+        //Debug.Log(ShineIntensity);
 	}
+    void MovingText(Text text,float Yoffset=0f, bool isHide = true, float delaytime = .5f,Action action = null) {
+     Vector3     Texttarget = new Vector3(text.transform.localPosition.x, text.transform.localPosition.y - Yoffset, text.transform.localPosition.z);
+         Vector3 pos = isHide? Texttarget : Textstartpos;
 
-
-    void MoveText(Text text,float moveOffset) {
-        Vector3 startpos = text.transform.localPosition;
-        Vector3 target = new Vector3(text.transform.localPosition.x, text.transform.localPosition.y - moveOffset, text.transform.localPosition.z);
-        //Debug.Log(target);
-
-        LeanTween.moveLocal(text.gameObject, target, .5f).setOnUpdate(delegate (float value)
+        LeanTween.moveLocal(text.gameObject, pos, .5f).setDelay(delaytime).setOnUpdate(delegate (float value)
         {//设置TEXT ALPHA从1-0；
-            float alpha = -value;
-            ChangeTextAlpha(alpha);
-        }).setEase(LeanTweenType.easeInSine).setOnComplete(delegate ()
-        {
-            //改变TEXT文字信息未已经解锁
-            UnlockScreenText.text = UnlockText[1];
+         //      float alpha = -value;
 
-            LeanTween.moveLocal(text.gameObject, startpos, .5f).setDelay(.5f).setEase(LeanTweenType.easeInSine).setOnUpdate(delegate(float value) {
-                //设置TEXT ALPHA从1-0；
-                float alpha = 1 + value;
-                ChangeTextAlpha(alpha);
-            }).setOnComplete(delegate() {
-                //触发完成解锁事件
-                mEndUnlockScreenEvent();
+            if (isHide)
+            {
+                float newalpha = UtilityFun.instance.Maping(value, 0, 1, 1, 0, false);
+                ChangeTextAlpha(newalpha);
+            }
+            else {
+           //     Debug.Log(value);
+                ChangeTextAlpha(value);
+            }
+        }).setOnComplete(action);
+        }
 
-                //在Unlockerscreen消失后重新设置解锁文字
-            });
-        });
-    }
+
 
     void ChangeTextAlpha(float alpha) {
         UnlockScreenText.color = new Color(UnlockScreenText.color.r, UnlockScreenText.color.g, UnlockScreenText.color.b, alpha);
     }
 
-
+    //开始时设置呼吸动画
     void hoverUnlock() {
 
 
@@ -132,16 +215,13 @@ public class ScreenUnlocker : MonoBehaviour {
     void ShineUnlock() {
         //停止当前的呼吸shine模式；
         LeanTween.cancel(a.id);
-        LeanTween.value(ShineIntensity, 5f, .5f).setOnUpdate(delegate (float value)
-        {
-            Color color = new Color(ShineColor.r * value, ShineColor.g * value, ShineColor.b * value, ShineColor.a * value);
-            ShineMaterialimg.material.SetColor("_OutlineColor", color);
-        });
+
+
+        UtilityFun.instance.ChangeShineIntensity(ref ShineIntensity, 5f, .5f, ShineColor, ShineMaterialimg);
     }
 
 
     IEnumerator changeRingAlpha(float from, float to,float time, List<Image> images ) {
-
 
         foreach (var image in images)
         {
@@ -155,9 +235,13 @@ public class ScreenUnlocker : MonoBehaviour {
                 {
                     image.color = new Color(currentColor.r, currentColor.g, currentColor.b, value );
                 });
+                //Debug.Log("当前LOOP值"+index / 2);
+
 
             });
-            yield return new WaitForSeconds(time / 2);
+                yield return new WaitForSeconds(time/2);
+
+
         }
     } 
 }
