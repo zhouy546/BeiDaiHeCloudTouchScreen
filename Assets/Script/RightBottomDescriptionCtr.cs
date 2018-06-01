@@ -3,29 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class RightBottomDescriptionCtr : MonoBehaviour {
+public class RightBottomDescriptionCtr : Ctr
+{
 
     public float ImageMaskDelay;
-    public float ScaleTime;
-    public AnimationCurve curve;
     List<ImageMask> imageMasks;
    List< RightBottomDescriptionImg> rightBottomDescriptionImgs;
   List<  RightBottomDesctiptionText> rightBottomDesctiptionTexts;
     // Use this for initialization
     void Start () {
         initialization();
-
     }
 	
 	// Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown(KeyCode.P)) {
-            SetObjectSize(Vector3.one, ScaleTime);
+            SetObjectSize(Vector3.one, scaleTime, Scalecurve);
             ShowAll();
         }
         if (Input.GetKeyDown(KeyCode.O))
         {
-            SetObjectSize(Vector3.zero, ScaleTime);
+            SetObjectSize(Vector3.zero, scaleTime, Scalecurve);
             HideAll();
         }
 
@@ -168,14 +166,7 @@ public class RightBottomDescriptionCtr : MonoBehaviour {
             item.HideText(0, 0);
         }
     }
-    /// <summary>
-    /// 设置该物体的大小
-    /// </summary>
-    /// <param name="size"></param>
-    /// <param name="time"></param>
-    public void SetObjectSize(Vector3 size,float time) {
-        LeanTween.scale(this.gameObject, size, time).setEase(curve);
-    }
+
 
     /// <summary>
     /// 初始化
@@ -194,7 +185,7 @@ public class RightBottomDescriptionCtr : MonoBehaviour {
 
         imageMasks = mask.ToList();
 
-        SetObjectSize(Vector3.zero, 0);
+        SetObjectSize(Vector3.zero, 0, Scalecurve);
     }
 
 }

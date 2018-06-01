@@ -16,7 +16,6 @@ public class UIImageBase : MonoBehaviour {
     // Use this for initialization
     public virtual void Start () {
         initialization();
-
     }
 
     // Update is called once per frame

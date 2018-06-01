@@ -5,13 +5,14 @@ using UnityEngine;
 using UnityEngine.UI;
 public class MainUI : MonoBehaviour {
 
-    public loopRing LoopRing;
+  //  public loopRing LoopRing;
 
    // public RightBottomDescription rightBottomDescription;
 
     public Animation SemiCircleTrans;
     public List<NodeCtr> nodeCtrs = new List<NodeCtr>();
-
+    public RightBottomDescriptionCtr rightBottomDescriptionCtr;
+    public LoopRingCtr loopRingCtr;
     public List<float> NodeSlotAngle;
 
     void SubScribe() {

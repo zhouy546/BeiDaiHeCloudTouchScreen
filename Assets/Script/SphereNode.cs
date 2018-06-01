@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent(typeof(MeshRenderer))]
 public class SphereNode : MonoBehaviour {
-
+    public float currentGlowStrength;
+    public float defaultGlowStrength;
     public struct Node {
         public Vector3 pos;
         public float Vel;
@@ -17,6 +18,9 @@ public class SphereNode : MonoBehaviour {
 
     private void Start()
     {
+
+        defaultGlowStrength= currentGlowStrength =  this.GetComponent<MeshRenderer>().material.GetFloat("_GlowStrength");
+
         float vel = Random.Range(.5f, 2f);
         float radx = Random.Range(.2f, 1f);
         float rady = Random.Range(.2f, 1f);
@@ -45,6 +49,26 @@ public class SphereNode : MonoBehaviour {
         Vector3 pos = new Vector3(x, y, node.pos.z);
         node.pos = pos;
  this.transform.localPosition = node.pos;
+    }
+
+    public void AdjustObjectIntensity(float instensity, float time) {
+        MeshRenderer temp = this.GetComponent<MeshRenderer>();
+        LeanTween.value(currentGlowStrength, instensity, time).setOnUpdate(delegate (float value)
+         {
+             temp.material.SetFloat("_GlowStrength", value);
+         }).setOnComplete(delegate () {
+             currentGlowStrength = instensity;
+         });
+
+
+        }
+
+    public void ObjectGlow() {
+        AdjustObjectIntensity(2, 1);
+    }
+
+    public void ObjectDim() {
+        AdjustObjectIntensity(0, 1);
     }
 
 }
