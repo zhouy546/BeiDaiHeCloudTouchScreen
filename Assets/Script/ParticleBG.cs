@@ -6,6 +6,28 @@ public class ParticleBG : MonoBehaviour {
   public  AnimationCurve curveRIGHT;
     public AnimationCurve curveLEFT;
 
+
+
+    void Subscribe() {
+        MainControler.MoveLeftEvent += moveLeft;
+        MainControler.MoveRightEvent += moveRight;
+    }
+
+    void UnSubscribe() {
+        MainControler.MoveLeftEvent -= moveLeft;
+        MainControler.MoveRightEvent -= moveRight;
+    }
+
+    private void OnEnable()
+    {
+        Subscribe();
+    }
+
+
+    private void OnDisable()
+    {
+        UnSubscribe();
+    }
     // Use this for initialization
     void Start () {
 		
@@ -13,15 +35,19 @@ public class ParticleBG : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonDown(0))
-        {
-            AddForce(8, curveRIGHT);
-            LerpSpeed(10, 0.01f, 2f);
-        }
-        else if(Input.GetMouseButtonDown(1)) {
-            AddForce(-8, curveLEFT);
-          LerpSpeed(10, 0.01f, 2f);
-        }
+
+    }
+
+    void moveLeft()
+    {
+        AddForce(8, curveRIGHT);
+        LerpSpeed(10, 0.01f, 2f);
+    }
+
+    void moveRight() {
+        AddForce(-8, curveLEFT);
+        LerpSpeed(10, 0.01f, 2f);
+
     }
 
 

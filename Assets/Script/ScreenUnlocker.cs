@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class ScreenUnlocker : MonoBehaviour {
+
+    public static ScreenUnlocker instance;
+
     public delegate void UnlockScreen();
     public static event UnlockScreen BeginUnlockScreenEvent;
     public static event UnlockScreen InbetweenUnlockScreenEvent;
@@ -93,12 +96,25 @@ public class ScreenUnlocker : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        if (instance == null) {
+            instance = this;
+        }
+
+
         Textstartpos = UnlockScreenText.transform.localPosition;
 
         hoverUnlock();
         DisplayImages = UtilityFun.instance.GetDisplayImage(this.gameObject, LoopImageList);
     }
-
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(2))
+        {
+       mBeginUnlockScreenEvent();
+        }
+        //Debug.Log(ShineIntensity);
+    }
 
     //    隐藏UI界面  订阅EndUnlockScreenEvent结束锁屏事件
     void mHideLockerScreen() {
@@ -166,13 +182,7 @@ public class ScreenUnlocker : MonoBehaviour {
         MovingText(UnlockScreenText, TextPosOffset, false);
     }
 
-    // Update is called once per frame
-    void Update () {
-        if (Input.GetMouseButtonDown(2)) {
-            mBeginUnlockScreenEvent();
-        }
-        //Debug.Log(ShineIntensity);
-	}
+
     void MovingText(Text text,float Yoffset=0f, bool isHide = true, float delaytime = .5f,Action action = null) {
      Vector3     Texttarget = new Vector3(text.transform.localPosition.x, text.transform.localPosition.y - Yoffset, text.transform.localPosition.z);
          Vector3 pos = isHide? Texttarget : Textstartpos;
