@@ -10,6 +10,8 @@ public class ScreenUnlocker : MonoBehaviour {
     public static ScreenUnlocker instance;
 
     public delegate void UnlockScreen();
+
+    public static event UnlockScreen initilizeUnlockScreen;
     public static event UnlockScreen BeginUnlockScreenEvent;
     public static event UnlockScreen InbetweenUnlockScreenEvent;
     public static event UnlockScreen EndUnlockScreenEvent;
@@ -23,6 +25,10 @@ public class ScreenUnlocker : MonoBehaviour {
     public Text UnlockScreenText;
     public Image ImgScaner;
 
+
+    public float countDownTime;
+    public float currentCountdownTime;
+    public bool inLock =true;
     private List<Image> DisplayImages ;
 
     private string[] UnlockText = { "触摸解锁", "屏幕已解锁" };
@@ -36,17 +42,26 @@ public class ScreenUnlocker : MonoBehaviour {
         BeginUnlockScreenEvent += mUnlockScreen;
         BeginUnlockScreenEvent += mHideText;
         InbetweenUnlockScreenEvent += mShowText;
-        EndUnlockScreenEvent += mHideLockerScreen;
-        EndUnlockScreenEvent += mHideText;
-
+        EndUnlockScreenEvent += endunlock;
+        initilizeUnlockScreen+=ResetUnlocker;
     }
 
     void UnSubScribe() {
         BeginUnlockScreenEvent -= mUnlockScreen;
         BeginUnlockScreenEvent -= mHideText;
         InbetweenUnlockScreenEvent -= mShowText;
-        EndUnlockScreenEvent -= mHideLockerScreen;
-        EndUnlockScreenEvent -= mHideText;
+        EndUnlockScreenEvent -= endunlock;
+        initilizeUnlockScreen -=ResetUnlocker;
+
+
+    }
+
+   public  void endunlock() {
+        MainUI.instance.TurnOnAllNodeInteraction();
+        MainControler.instance.SetState(MainControler.instance.PerviousState);
+        mHideLockerScreen();
+        StartCountDown();
+        mHideText();
     }
 
     private void OnEnable()
@@ -58,6 +73,17 @@ public class ScreenUnlocker : MonoBehaviour {
     private void OnDisable()
     {
         UnSubScribe();
+    }
+
+
+    public void minitilizeUnlockScreen()
+    {
+        Debug.Log("唤醒屏保");
+
+        if (initilizeUnlockScreen != null)
+        {
+            initilizeUnlockScreen();
+        }
     }
 
     //initialize event
@@ -100,19 +126,62 @@ public class ScreenUnlocker : MonoBehaviour {
             instance = this;
         }
 
+        initialization();
 
+    }
+
+    public void initialization() {
         Textstartpos = UnlockScreenText.transform.localPosition;
 
         hoverUnlock();
+
         DisplayImages = UtilityFun.instance.GetDisplayImage(this.gameObject, LoopImageList);
+
+        currentCountdownTime = countDownTime;
+
+        StartCoroutine(countDown());
+
     }
+
+    public void ResetUnlocker() {
+        hoverUnlock();
+        List<Image> temp = LoopImageList;
+        temp.Add(ImgScaner);
+
+        List<Image> displaytemp = UtilityFun.instance.GetDisplayImage(this.gameObject, temp);
+
+        UtilityFun.instance.ChangeListOfImageAlpha(displaytemp, 1, .5f);
+
+        UtilityFun.instance.ChangeListOfImageAlpha(temp, 0, 0);
+
+        scanerAlpha(ImgScaner, 0);
+
+        MovingText(UnlockScreenText, TextPosOffset, false);
+
+        UnlockScreenText.text = UnlockText[0];
+
+        this.GetComponent<Image>().raycastTarget = true;//set it interactable
+
+        MainControler.instance.SetState(AppState.Looker);
+
+    }
+
+
+    public void StartCountDown() {
+
+        currentCountdownTime = countDownTime;
+        inLock = false;
+        StartCoroutine(countDown());
+
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(2))
-        {
-       mBeginUnlockScreenEvent();
-        }
+       // if (Input.GetMouseButtonDown(2))
+       // {
+       //mBeginUnlockScreenEvent();
+       // }
         //Debug.Log(ShineIntensity);
     }
 
@@ -212,7 +281,6 @@ public class ScreenUnlocker : MonoBehaviour {
     //开始时设置呼吸动画
     void hoverUnlock() {
 
-
         a = LeanTween.value(1.5f, 2.5f, 1f).setOnUpdate(delegate (float value)
         {
             ShineIntensity = value;
@@ -250,8 +318,25 @@ public class ScreenUnlocker : MonoBehaviour {
 
             });
                 yield return new WaitForSeconds(time/2);
-
-
         }
     } 
+
+
+   public IEnumerator countDown()
+    {
+        if (!inLock) {
+            currentCountdownTime--;
+            //Debug.Log(currentCountdownTime);
+            yield return new WaitForSeconds(1);
+            if (currentCountdownTime > 0)
+            {
+
+              StartCoroutine(  countDown());
+            }
+            else
+            {
+                minitilizeUnlockScreen();
+            }
+        }
+    }
 }

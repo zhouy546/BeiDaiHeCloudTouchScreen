@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 public class MainUI : MonoBehaviour {
 
+
+    public static MainUI instance;
   //  public loopRing LoopRing;
 
    // public RightBottomDescription rightBottomDescription;
@@ -15,12 +17,12 @@ public class MainUI : MonoBehaviour {
     public LoopRingCtr loopRingCtr;
     public List<float> NodeSlotAngle;
 
-    void SubScribe() {
+   public void SubScribe() {
         MainControler.MoveLeftEvent += MoveLeft;
         MainControler.MoveRightEvent += MoveRight;
     }
 
-    void UnSubscribe() {
+ public   void UnSubscribe() {
         MainControler.MoveLeftEvent -= MoveLeft;
         MainControler.MoveRightEvent -= MoveRight;
     }
@@ -33,19 +35,22 @@ public class MainUI : MonoBehaviour {
 
     private void OnDisable()
     {
-        UnSubscribe();
+       UnSubscribe();
     }
 
     // Use this for initialization
     void Start () {
-        StartCoroutine(SetupMainUI());
+        if (instance == null) {
+            instance = this;
+        }
+
     }
 
 
 
 
 
-    IEnumerator SetupMainUI() {
+   public IEnumerator SetupMainUI() {
         yield return new WaitForSeconds(.2f);
         //设置Node
         foreach (var item in nodeCtrs)
@@ -57,18 +62,29 @@ public class MainUI : MonoBehaviour {
         //设置DescrptionCircle
 
         //设置LoopCircle
+
+        loopRingCtr.HideAll();
+    }
+
+
+    public void HideAllNodes() {
+        foreach (var item in nodeCtrs)
+        {
+            item.HideText();
+            item.DimAll();
+        }
     }
 
     // Update is called once per frame
     void Update () {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
+        //if (Input.GetKeyDown(KeyCode.Q))
+        //{
 
-            RotateSemicircle();
-        }
+        //    RotateSemicircle();
+        //}
     }
     //向左移动
-    void MoveLeft() {
+   public void MoveLeft() {
         foreach (var item in nodeCtrs)
         {
             if (!item.isMoving)
@@ -77,12 +93,11 @@ public class MainUI : MonoBehaviour {
                 float temp = NodeSlotAngle[LoopListDecrease(NodeSlotAngle, ref item.CurrenSlot)];
 
                 item.MoveToTargetEngle(temp);
-
             }
         }
     }
     //向右移动
-    void MoveRight() {
+   public void MoveRight() {
         foreach (var item in nodeCtrs)
         {
             if (!item.isMoving)
@@ -95,10 +110,34 @@ public class MainUI : MonoBehaviour {
         }
     }
 
+    public void ResttoLoop() {
+        if (true)
+        {
+            loopRingCtr.ShowAll();
+            foreach (var item in nodeCtrs)
+            {
+                Debug.Log("doing");
+                item.nodeRayCastImg.ShowImage();
+                item.ShowDisplayObject(.2f);
+                item.shinkDown();
+                item.GlowAll();
 
+            }
+        }
+    }
 
-    void RotateSemicircle() {
-        SemiCircleTrans.Play("SemiCircleAnimation");
+    public void ResttoSolo()
+    {
+        if (true)
+        {
+            //loopRingCtr.ShowAll();
+            //foreach (var item in nodeCtrs)
+            //{
+            //    item.shinkDown();
+            //    item.GlowAll();
+
+            //}
+        }
     }
 
 
@@ -127,5 +166,41 @@ public class MainUI : MonoBehaviour {
         Num = temp;
 
         return temp;
+    }
+
+
+    public void TurnOnAllNodeInteraction() {
+        foreach (var item in nodeCtrs)
+        {
+            item.TurnOnInteraction();
+        }
+    }
+
+    public void TurnOffAllNodeInteraction() {
+        foreach (var item in nodeCtrs)
+        {
+            item.TurnOffInteraction();
+        }
+    }
+
+    public void TurnOnOneNodeInteraction(NodeCtr _nodeCtr) {
+        foreach (var item in nodeCtrs)
+        {
+            if (item.Id == _nodeCtr.Id)
+            {
+                item.TurnOnInteraction();
+            }
+        }
+    }
+
+    public void TurnOffOneNodeInteraction(NodeCtr _nodeCtr)
+    {
+        foreach (var item in nodeCtrs)
+        {
+            if (item.Id == _nodeCtr.Id)
+            {
+                item.TurnOffInteraction();
+            }
+        }
     }
 }

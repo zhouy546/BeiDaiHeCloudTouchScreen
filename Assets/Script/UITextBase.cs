@@ -16,11 +16,11 @@ public class UITextBase : MonoBehaviour {
 
     public delegate void setDisplayValue();
 
-    public void initialization()
+    public virtual void initialization()
     {
         text = this.GetComponent<Text>();
         CurrentColor = Defaultcolor = text.color;
-        HideText(0, 0);
+        HideText( 0);
     }
     // Use this for initialization
     public virtual void Start () {
@@ -32,12 +32,12 @@ public class UITextBase : MonoBehaviour {
 		
 	}
 
-    public void ShowText(float alpha,float time) {
-        ChangeTextAlpha(alpha, time, ()=> onDisplay =true);
+    public void ShowText(float time) {
+        ChangeTextAlpha(1, time, ()=> onDisplay =true);
     }
 
-    public void HideText(float alpha,float time) {
-        ChangeTextAlpha(alpha, time, () => onDisplay = false);
+    public void HideText(float time) {
+        ChangeTextAlpha(0, time, () => onDisplay = false);
     }
 
    public void ChangeTextAlpha(float alpha, float time, setDisplayValue Displayvalue) {

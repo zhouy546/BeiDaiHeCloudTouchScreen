@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LineSystem : MonoBehaviour {
-
+    public SphereNodeCtr sphereNodeCtr;
 
     public List<Transform> Nodes;
     public LineRenderer lineRenderer;
@@ -12,24 +12,36 @@ public class LineSystem : MonoBehaviour {
     public int lengthOfLineRenderer;
     // Use this for initialization
 
-    public List<MeshRenderer> LineSystemMeshRender = new List<MeshRenderer>();
-
     void Start () {
 
+        initialization();
+    }
 
+    public void initialization()
+    {
+        Nodes = GetSphereNodesTrans();
 
-
-
-        lengthOfLineRenderer = Nodes.Count*2;
+        lengthOfLineRenderer = Nodes.Count * 2;
         lineRenderer.material = new Material(Shader.Find("Glow 11/Unity/Transparent/Cutout/Bumped Diffuse"));
         lineRenderer.widthMultiplier = 0.03f;
         lineRenderer.positionCount = lengthOfLineRenderer;
 
         // A simple 2 color gradient with a fixed alpha of 1.0f.
-        DrawNodePos = NodePicker(Nodes, 9);
-        LineSystemMeshRender = UtilityFun.instance.GetMeshRenders(this.gameObject);
-        RotateMySelf();
+        DrawNodePos = NodePicker(Nodes, Nodes.Count - 1);
 
+        RotateMySelf();
+    }
+
+
+    List<Transform> GetSphereNodesTrans() {
+        List<MeshRenderer> tempRender = UtilityFun.instance.GetMeshRenders(this.gameObject);
+        List<Transform> temp = new List<Transform>();
+
+        foreach (var item in tempRender)
+        {
+            temp.Add(item.GetComponent<Transform>());
+        }
+        return temp;
     }
 
     void RotateMySelf() {
@@ -81,7 +93,6 @@ public class LineSystem : MonoBehaviour {
             {
                 item.material.SetFloat("_GlowStrength", value);
             });
-
         }
     }
 

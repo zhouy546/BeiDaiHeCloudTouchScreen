@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class SphereNodeCtr : Ctr {
-    List<SphereNode> sphereNodes;
+  public   List<SphereNode> sphereNodes;
 	// Use this for initialization
 	void Start () {
         initialization();

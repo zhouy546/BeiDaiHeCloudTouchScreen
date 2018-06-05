@@ -154,7 +154,7 @@ public class RightBottomDescriptionCtr : Ctr
     public void ShowAllText() {
         foreach (var item in rightBottomDesctiptionTexts)
         {
-            item.ShowText(1, 1);
+            item.ShowText( 1);
         }
     }
     /// <summary>
@@ -163,7 +163,7 @@ public class RightBottomDescriptionCtr : Ctr
     public void HideAllText() {
         foreach (var item in rightBottomDesctiptionTexts)
         {
-            item.HideText(0, 0);
+            item.HideText(0);
         }
     }
 

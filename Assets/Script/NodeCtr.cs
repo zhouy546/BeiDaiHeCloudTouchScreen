@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class NodeCtr : MonoBehaviour {
-    
-    public bool IsInSpotlight= true;
+public class NodeCtr : Ctr {
+
+    public Animation SemiCircleTrans;
+
+    public int Id;
+
+    public bool IsInSpotlight= false;
     public bool isMoving;
 
     public int CurrenSlot = 0;
     public List<Image> AllImage = new List<Image>();
     public LineSystem lineSystem;
+    public SphereNodeCtr sphereNodeCtr;
     public DisplayObject displayObject;
+    public DisplayObjectText displayObjectText;
     public Transform MidContent;
-
+    public NodeRayCastImg nodeRayCastImg;
 
     //rotation value
     public Vector3 DisplayPos = new Vector3(-300,0,0);
@@ -58,19 +64,34 @@ public class NodeCtr : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.W))
         {
             Debug.Log("SHINKDown");
-            ShinkDown();
+            shinkDown();
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            Debug.Log("scale up");
+            ScaleUp();
         }
 
     }
+    public void HideDisplayObject(float time)
+    {
+        displayObject.SetObjectAlpha(displayObject.meshRenderer, 0, time);
 
+    }
+
+    public void ShowDisplayObject(float time) {
+        displayObject.SetObjectAlpha(displayObject.meshRenderer, 1, time);
+
+    }
 
     public void SetUpNode() {
         AllImage = UtilityFun.instance.GetDisplayImage(this.gameObject);
         SetAllImageAlpha(AllImage, 0f, 0f);
-        lineSystem.SetObjectAlpha(lineSystem.LineSystemMeshRender, 0, 0);
+        sphereNodeCtr.DimAllSpheres();
         lineSystem.setLineAlpha(0, 0);
-        displayObject.SetObjectAlpha(displayObject.meshRenderer, 0, 0);
+        HideDisplayObject(0);
     }
+
 
 
 
@@ -78,9 +99,11 @@ public class NodeCtr : MonoBehaviour {
     {
         if (IsInSpotlight) {
             SetAllImageAlpha(AllImage, 1f, .2f);
-            lineSystem.SetObjectAlpha(lineSystem.LineSystemMeshRender, 1, .2f);
+            displayObjectText.ShowText(1);
+         //   lineSystem.SetObjectAlpha(lineSystem.LineSystemMeshRender, 1, .2f);
             lineSystem.setLineAlpha(1, .2f);
-            displayObject.SetObjectAlpha(displayObject.meshRenderer, 1, .2f);
+            sphereNodeCtr.GlowAllSpheres();
+            ShowDisplayObject(.2f);
             Debug.Log("show mainDisplay");
         }
     }
@@ -99,14 +122,79 @@ public class NodeCtr : MonoBehaviour {
         }
     }
 
-    public void ShinkDown() {
-        foreach (var item in AllImage)
-        {
-            if (item.GetComponent<Animation>() != null) {
-                item.GetComponent<Animation>().Play("CircleShinkDown");
+    void RotateSemicircle()
+    {
+        SemiCircleTrans.Play("SemiCircleAnimation");
+    }
+
+
+    public void DimAll() {
+        DimLine();
+        DimSphere();
+        HideText();
+    }
+
+    public void DimLine() {
+        lineSystem.setLineAlpha(0, 1);
+    }
+
+    public void DimSphere()
+    {
+        sphereNodeCtr.DimAllSpheres();
+    }
+
+    public void GlowAll() {
+        ShowText();
+        GlowLine();
+        GlowSpherel();
+    }
+
+    public void GlowLine()
+    {
+        lineSystem.setLineAlpha(1, 1);
+    }
+
+    public void GlowSpherel()
+    {
+        sphereNodeCtr.GlowAllSpheres();
+    }
+
+    public void ShowText() {
+        displayObjectText.ShowText(1f);
+    }
+
+    public void HideText() {
+        displayObjectText.HideText(1f);
+    }
+
+
+    public void shinkDown()
+    {
+        if (IsInSpotlight) {
+            foreach (var item in AllImage)
+            {
+                if (item.GetComponent<Animation>() != null)
+                {
+                    item.GetComponent<Animation>().Play("CircleShinkDown");
+                }
             }
+            MidContent.GetComponent<Animation>().Play("DisplayObjectShinkDown");
         }
-        MidContent.GetComponent<Animation>().Play("DisplayObjectShinkDown");
+        IsInSpotlight = false;
+    }
+
+    public void ScaleUp() {
+        if (!IsInSpotlight) {
+            foreach (var item in AllImage)
+            {
+                if (item.GetComponent<Animation>() != null)
+                {
+                    item.GetComponent<Animation>().Play("CircleScaleUp");
+                }
+            }
+            MidContent.GetComponent<Animation>().Play("DisplayObjectScaleUp");
+        }
+        IsInSpotlight = true;
     }
 
     public void MoveToLocation(Vector3 pos) {
@@ -155,4 +243,15 @@ public class NodeCtr : MonoBehaviour {
 
         this.transform.localPosition = pos;
     }
+
+
+    public void TurnOnInteraction() {
+        nodeRayCastImg.setRayCastTarget(true);
+    }
+
+    public void TurnOffInteraction()
+    {
+        nodeRayCastImg.setRayCastTarget(false);
+    }
+
 }

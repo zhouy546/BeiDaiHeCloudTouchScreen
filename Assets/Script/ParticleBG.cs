@@ -8,12 +8,12 @@ public class ParticleBG : MonoBehaviour {
 
 
 
-    void Subscribe() {
+   public void Subscribe() {
         MainControler.MoveLeftEvent += moveLeft;
         MainControler.MoveRightEvent += moveRight;
     }
 
-    void UnSubscribe() {
+   public void UnSubscribe() {
         MainControler.MoveLeftEvent -= moveLeft;
         MainControler.MoveRightEvent -= moveRight;
     }
