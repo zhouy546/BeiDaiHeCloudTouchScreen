@@ -59,6 +59,7 @@ public class ScreenUnlocker : MonoBehaviour {
    public  void endunlock() {
         MainUI.instance.TurnOnAllNodeInteraction();
         MainControler.instance.SetState(MainControler.instance.PerviousState);
+        MainControler.instance.turnonMovement();
         mHideLockerScreen();
         StartCountDown();
         mHideText();

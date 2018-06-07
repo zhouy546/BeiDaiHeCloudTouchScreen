@@ -17,33 +17,42 @@ public class RightBottomDescriptionCtr : Ctr
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.P)) {
-            SetObjectSize(Vector3.one, scaleTime, Scalecurve);
-            ShowAll();
-        }
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            SetObjectSize(Vector3.zero, scaleTime, Scalecurve);
-            HideAll();
-        }
+        //if (Input.GetKeyDown(KeyCode.P)) {
+        //    ShowAll();
+        //}
+        //if (Input.GetKeyDown(KeyCode.O))
+        //{
+        //    HideAll();
+        //}
 
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-           StartCoroutine(ShowImageMask(ImageMaskDelay));
-        }
+        //if (Input.GetKeyDown(KeyCode.K))
+        //{
+        //}
 
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            StartCoroutine(HideImageMask(ImageMaskDelay));
-        }
+        //if (Input.GetKeyDown(KeyCode.L))
+        //{
+        //}
     }
+
+
+    public void showMask() {
+        StartCoroutine(ShowImageMask(ImageMaskDelay));
+
+    }
+
+    public void HideMask() {
+        StartCoroutine(HideImageMask(ImageMaskDelay));
+
+    }
+
+
 
     /// <summary>
     /// 显示白色Mask
     /// </summary>
     /// <param name="delay 延后时间"></param>
     /// <returns></returns>
-  public  IEnumerator ShowImageMask(float delay)
+    private  IEnumerator ShowImageMask(float delay)
     {
         foreach (var item in imageMasks)
         {
@@ -58,7 +67,7 @@ public class RightBottomDescriptionCtr : Ctr
     /// </summary>
     /// <param name="delay 延后时间"></param>
     /// <returns></returns>
-    public IEnumerator HideImageMask(float delay)
+    private IEnumerator HideImageMask(float delay)
     {
         foreach (var item in imageMasks)
         {
@@ -109,6 +118,7 @@ public class RightBottomDescriptionCtr : Ctr
 
         HideAllImage();
         HideAllText();
+        SetObjectSize(Vector3.zero, scaleTime, Scalecurve);
 
     }
     /// <summary>
@@ -117,6 +127,7 @@ public class RightBottomDescriptionCtr : Ctr
     public void ShowAll() {
         ShowAllImage();
         ShowAllText();
+        SetObjectSize(Vector3.one, scaleTime, Scalecurve);
     }
     /// <summary>
     /// 显示所有图片

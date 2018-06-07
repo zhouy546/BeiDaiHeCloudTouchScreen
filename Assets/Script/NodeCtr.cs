@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,12 +7,12 @@ public class NodeCtr : Ctr {
 
     public Animation SemiCircleTrans;
 
-    public int Id;
+    public int Id=0;
 
     public bool IsInSpotlight= false;
     public bool isMoving;
 
-    public int CurrenSlot = 0;
+    public int CurrenSlot;
     public List<Image> AllImage = new List<Image>();
     public LineSystem lineSystem;
     public SphereNodeCtr sphereNodeCtr;
@@ -21,12 +22,13 @@ public class NodeCtr : Ctr {
     public NodeRayCastImg nodeRayCastImg;
 
     //rotation value
-    public Vector3 DisplayPos = new Vector3(-300,0,0);
+    private Vector3 DisplayPos = new Vector3(-300,0,0);
+    public Vector3 SlotPosition;
     public float vel;
     public float radiusX;
     public float radiusY;
     public float zRot = 45f;
-
+    public float value;
     public float angle;
 
     public void SubScribe()
@@ -56,22 +58,21 @@ public class NodeCtr : Ctr {
 
     // Use this for initialization
     void Start () {
-
+      StartCoroutine(  initialization());
     }
 
     // Update is called once per frame
     void Update () {
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            Debug.Log("SHINKDown");
-            shinkDown();
-        }
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            Debug.Log("scale up");
-            ScaleUp();
-        }
-
+        //if (Input.GetKeyDown(KeyCode.W))
+        //{
+        //    Debug.Log("SHINKDown");
+        //    shinkDown();
+        //}
+        //if (Input.GetKeyDown(KeyCode.X))
+        //{
+        //    Debug.Log("scale up");
+        //    ScaleUp();
+        //}
     }
     public void HideDisplayObject(float time)
     {
@@ -108,7 +109,7 @@ public class NodeCtr : Ctr {
         }
     }
 
-    void SetAllImageAlpha(List<Image> images, float Alpha, float time)
+  public  void SetAllImageAlpha(List<Image> images, float Alpha, float time)
     {
         foreach (var item in images)
         {
@@ -129,9 +130,13 @@ public class NodeCtr : Ctr {
 
 
     public void DimAll() {
+        HideText();
         DimLine();
         DimSphere();
-        HideText();
+        // shinkDown();
+        HideDisplayObject(.2f);
+        nodeRayCastImg.HideImage();
+        displayObject.SetObjectAlpha(displayObject.meshRenderer, 0, .2f);
     }
 
     public void DimLine() {
@@ -147,6 +152,10 @@ public class NodeCtr : Ctr {
         ShowText();
         GlowLine();
         GlowSpherel();
+        //ScaleUp();
+        nodeRayCastImg.ShowImage();
+        ShowDisplayObject(.2f);
+        displayObject.SetObjectAlpha(displayObject.meshRenderer, 1, .2f);
     }
 
     public void GlowLine()
@@ -234,7 +243,9 @@ public class NodeCtr : Ctr {
     public void  Movement(float _angle)
     {
         float rad = Mathf.Deg2Rad * _angle;
-        float x = radiusX * Mathf.Sin(rad);
+        float radx = Mathf.Deg2Rad * (_angle + value);
+
+        float x = radiusX * Mathf.Sin(radx)*Mathf.Sin(Mathf.Deg2Rad * zRot);
 //        Debug.Log(1 / Mathf.Sin(Mathf.Deg2Rad * zRot));
 
         float y = radiusY * Mathf.Cos(rad ) /(1 / Mathf.Sin(Mathf.Deg2Rad * zRot));
@@ -242,8 +253,18 @@ public class NodeCtr : Ctr {
       //  Debug.Log(pos);
 
         this.transform.localPosition = pos;
+        SlotPosition = pos;
     }
 
+    public void MoveToSoloPosition() {
+        Debug.Log("移动到Solo 位置");
+        MoveTo(this.gameObject,DisplayPos, 1f);
+    }
+
+    public void MoveToSlotPosition(Action action=null)
+    {
+        MoveTo(this.gameObject,SlotPosition, 1f, action);
+    }
 
     public void TurnOnInteraction() {
         nodeRayCastImg.setRayCastTarget(true);
@@ -252,6 +273,28 @@ public class NodeCtr : Ctr {
     public void TurnOffInteraction()
     {
         nodeRayCastImg.setRayCastTarget(false);
+    }
+
+    //public void ToggleToSoloDisplayPos(bool b)
+    //{
+    //    if (b)
+    //    {
+
+    //    }
+    //    else {
+    //  //      MoveToTargetEngle(MainUI.instance.NodeSlotAngle[CurrenSlot]);
+    //    }
+    //}
+
+
+
+    IEnumerator initialization() {
+        SetUpNode();
+        yield return new WaitForSeconds(.2f);
+        CurrenSlot =Id;
+        IsInSpotlight = true;
+        isMoving = false;
+        MoveToTargetEngle(MainUI.instance.NodeSlotAngle[CurrenSlot]);
     }
 
 }

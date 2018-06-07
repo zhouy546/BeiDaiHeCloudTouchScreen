@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -65,10 +66,10 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
     public static event MoveNode MoveLeftEvent;
     public static event MoveNode MoveRightEvent;
 
-    private NodeRayCastImg temp;
+    public NodeRayCastImg temp;
+    private bool ismove;
 
-
-   public void SetState(AppState _appState) {
+   public void SetState(AppState _appState,Action action=null) {
         switch (_appState)
         {
             case AppState.initialization:
@@ -91,55 +92,74 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
                 {
                     PerviousState = appState;
                     appState = AppState.Solo;
+                    solo();
+
                 }
                 break;
 
             case AppState.Loop:
-                if (appState != AppState.Loop) {
+
+                if (appState != AppState.Loop)
+                {
+                    Loop(action);
                     PerviousState = appState;
                     appState = AppState.Loop;
-                    Loop();
+
+                }
+                else {
+                    Debug.Log("normal move");
+                    if (action != null)
+                    {
+                        action();
+
+                    }
                 }
                 break;
         }
     }
 
-    void UnLockevent()
-    {
-
-    }
-
-    void Lockevent()
-    {
-
-
-    }
-
     private void Lock()
     {
+        mainUI.LockHideAllNodes();
         if (temp != null) {
             temp.nodeCtr.IsInSpotlight = false;
-
         }
-
-
-        StartCoroutine(mainUI.SetupMainUI());
-        mainUI.HideAllNodes();
-        //mainUI.UnSubscribe();
-        //particleBG.UnSubscribe();
+        turnoffMovement();
     }
 
-    private void Loop() {
-        if (temp != null) {
-            temp.nodeCtr.IsInSpotlight = false;
+    private void Loop(Action action) {
+        if (appState != AppState.Loop)
+        {
+            mainUI.ResttoLoop();//重新设置所有
+            if (temp != null)
+            {
+                Debug.Log("doing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+
+                temp.nodeCtr.MoveToSlotPosition(action);//先回原位，再移动slot
+
+                temp.nodeCtr.IsInSpotlight = false;
+            }
         }
-        mainUI.ResttoLoop();//重新设置所有
-        //mainUI.SubScribe();
-        //particleBG.Subscribe();
     }
 
     private void solo() {
+        mainUI.ResttoSolo();
 
+        temp.nodeCtr.MoveToSoloPosition();
+        if (temp.nodeCtr.IsInSpotlight)
+        {
+            temp.nodeCtr.IsInSpotlight = true;
+        }
+
+        Debug.Log("to Solo");
+    }
+
+    public void turnoffMovement() {
+        mainUI.UnSubscribe();
+    }
+
+    public void turnonMovement() {
+        mainUI.SubScribe();
     }
 
     public void mMoveLeftEvent()
@@ -175,6 +195,7 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
 
         client.EndPos = eventData.position;
+        ismove = false;
 
     }
 
@@ -223,21 +244,8 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
         {
             //显示SOLO模式
              temp = eventData.pointerCurrentRaycast.gameObject.GetComponent<NodeRayCastImg>();
+            SetState(AppState.Solo);
 
-            if (!temp.nodeCtr.IsInSpotlight) {
-
-                MainUI.instance.TurnOffAllNodeInteraction();
-                MainUI.instance.TurnOnOneNodeInteraction(temp.nodeCtr);
-
-                temp.nodeCtr.ShowText();
-                temp.nodeCtr.ScaleUp();
-
-                mainUI.loopRingCtr.HideAll();
-
-                SetState(AppState.Solo);
-
-                temp.nodeCtr.IsInSpotlight = true;
-            }
 
         }
     }
@@ -255,12 +263,12 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
         {
             case Move.MoveRight:
 
-                SetState(AppState.Loop);
+            //    SetState(AppState.Loop);
                 mMoveRightEvent();
 
                 break;
             case Move.MoveLeft:
-               SetState(AppState.Loop);
+           //    SetState(AppState.Loop);
                 mMoveLeftEvent();
                 break;
             case Move.Idle:
@@ -274,16 +282,18 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
     public Move MoveDirection(MoveDistanceDelegate moveDistanceDelegate)
     {
         float dis = moveDistanceDelegate();
-        if (dis > 0 && client.MoveDistance > 100)
+        if (dis > 0 && client.MoveDistance > 100&& !ismove)
         {
             //Debug.Log("move down");
             client.StartPos = client.EndPos;
+            ismove = true;
             return Move.MoveLeft;
         }
-        else if (dis < 0 && client.MoveDistance > 100)
+        else if (dis < 0 && client.MoveDistance > 100&&!ismove)
         {
             //Debug.Log("move up");
             client.StartPos = client.EndPos;
+            ismove = true;
             return Move.MoveRight;
         }
         return Move.Idle;

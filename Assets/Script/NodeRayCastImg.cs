@@ -20,7 +20,7 @@ public class NodeRayCastImg : UIImageBase {
         image = this.GetComponent<Image>();
         CurrentColor = Defaultcolor = image.color;
         ChangeColor(0, Defaultcolor);
-        ShowImage();
+        HideImage();
         setRayCastTarget(false);
     }
 

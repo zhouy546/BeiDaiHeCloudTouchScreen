@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -30,7 +31,7 @@ public class MainUI : MonoBehaviour {
 
     private void OnEnable()
     {
-        SubScribe();
+    //    SubScribe();
     }
 
     private void OnDisable()
@@ -67,13 +68,7 @@ public class MainUI : MonoBehaviour {
     }
 
 
-    public void HideAllNodes() {
-        foreach (var item in nodeCtrs)
-        {
-            item.HideText();
-            item.DimAll();
-        }
-    }
+
 
     // Update is called once per frame
     void Update () {
@@ -85,6 +80,10 @@ public class MainUI : MonoBehaviour {
     }
     //向左移动
    public void MoveLeft() {
+        MainControler.instance.SetState(AppState.Loop,Left);
+    }
+
+    public void Left() {
         foreach (var item in nodeCtrs)
         {
             if (!item.isMoving)
@@ -96,8 +95,15 @@ public class MainUI : MonoBehaviour {
             }
         }
     }
+
     //向右移动
    public void MoveRight() {
+        MainControler.instance.SetState(AppState.Loop,Right);
+
+    }
+
+    public void Right() {
+
         foreach (var item in nodeCtrs)
         {
             if (!item.isMoving)
@@ -110,36 +116,80 @@ public class MainUI : MonoBehaviour {
         }
     }
 
+    public void LockHideAllNodes()
+    {
+        foreach (var item in nodeCtrs)
+        {
+            Debug.Log("HideAllNode");
+            //          item.HideText();
+            item.DimAll();
+            item.SetAllImageAlpha(item.AllImage, 0f, 0f);
+        }
+        loopRingCtr.HideAll();
+
+
+        HideRightBottomDescription();
+        ToggleRightBottomDescriptionPlayAnim(true);
+    }
+
+
     public void ResttoLoop() {
         if (true)
         {
             loopRingCtr.ShowAll();
             foreach (var item in nodeCtrs)
             {
-                Debug.Log("doing");
-                item.nodeRayCastImg.ShowImage();
-                item.ShowDisplayObject(.2f);
+             //   item.nodeRayCastImg.ShowImage();
+              //  item.ShowDisplayObject(.2f);
                 item.shinkDown();
-                item.GlowAll();
+                item.SetAllImageAlpha(item.AllImage, 1f, .2f);
 
+                item.GlowAll();
             }
+
+            HideRightBottomDescription();
+            ToggleRightBottomDescriptionPlayAnim(true);
         }
     }
+
+
+
+
 
     public void ResttoSolo()
     {
         if (true)
         {
-            //loopRingCtr.ShowAll();
-            //foreach (var item in nodeCtrs)
-            //{
-            //    item.shinkDown();
-            //    item.GlowAll();
-
-            //}
+            TurnOffAllNodeInteraction();
+            TurnOnOneNodeInteraction(MainControler.instance.temp.nodeCtr);
+            MainControler.instance.temp.nodeCtr.GlowAll();
+            MainControler.instance.temp.nodeCtr.ScaleUp();
+            loopRingCtr.HideAll();
+            ShowRightBottomDescription();
+            ToggleRightBottomDescriptionPlayAnim(false);
         }
     }
+    public void HideRightBottomDescription()
+    {
+        rightBottomDescriptionCtr.HideAll();
+    }
 
+    public void ShowRightBottomDescription()
+    {
+        rightBottomDescriptionCtr.ShowAll();
+    }
+
+    public void ToggleRightBottomDescriptionPlayAnim(bool b)
+    {
+        if (b)
+        {
+            rightBottomDescriptionCtr.showMask();
+        }
+        else
+        {
+            rightBottomDescriptionCtr.HideMask();
+        }
+    }
 
     //循环LIST[] 里面的数值 向上增大
     int LoopListIncrease(List<float> Anglelist,  ref int Num) {
