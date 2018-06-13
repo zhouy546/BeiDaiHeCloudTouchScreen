@@ -27,4 +27,9 @@ public class NodeRayCastImg : UIImageBase {
   public  void setRayCastTarget(bool b) {
         image.raycastTarget = b;
     }
+
+    public void ShowAnimation() {
+        this.transform.localScale = 1.1f * Vector3.one;
+        LeanTween.scale(this.gameObject, Vector3.one, .5f).setEase(LeanTweenType.easeOutQuad).setDelay(1.2f);
+    }
 }

@@ -16,6 +16,7 @@ public class MainUI : MonoBehaviour {
     public List<NodeCtr> nodeCtrs = new List<NodeCtr>();
     public RightBottomDescriptionCtr rightBottomDescriptionCtr;
     public LoopRingCtr loopRingCtr;
+    public LeftSubTitleCtr leftSubTitleCtr;
     public List<float> NodeSlotAngle;
 
    public void SubScribe() {
@@ -65,6 +66,7 @@ public class MainUI : MonoBehaviour {
         //设置LoopCircle
 
         loopRingCtr.HideAll();
+        leftSubTitleCtr.HideAll();
     }
 
 
@@ -126,7 +128,7 @@ public class MainUI : MonoBehaviour {
             item.SetAllImageAlpha(item.AllImage, 0f, 0f);
         }
         loopRingCtr.HideAll();
-
+        loopRingCtr.HideAll();
 
         HideRightBottomDescription();
         ToggleRightBottomDescriptionPlayAnim(true);
@@ -137,6 +139,7 @@ public class MainUI : MonoBehaviour {
         if (true)
         {
             loopRingCtr.ShowAll();
+            leftSubTitleCtr.HideAll();
             foreach (var item in nodeCtrs)
             {
              //   item.nodeRayCastImg.ShowImage();
@@ -167,6 +170,8 @@ public class MainUI : MonoBehaviour {
             loopRingCtr.HideAll();
             ShowRightBottomDescription();
             ToggleRightBottomDescriptionPlayAnim(false);
+
+            leftSubTitleCtr.ShowAll();
         }
     }
     public void HideRightBottomDescription()

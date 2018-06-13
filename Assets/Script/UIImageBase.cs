@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class UIImageBase : MonoBehaviour {
-
     public Color Defaultcolor;
     public Color CurrentColor;
 
@@ -12,6 +11,8 @@ public class UIImageBase : MonoBehaviour {
     public bool onDisplay;
 
     public delegate void setDisplayValue();
+
+    protected LTDescr alphaLTDescr;
 
     // Use this for initialization
     public virtual void Start () {
@@ -41,11 +42,11 @@ public class UIImageBase : MonoBehaviour {
     }
 
     public void changeImageAlpha(float alpha, float time , setDisplayValue Displayvalue) {
-        LeanTween.value(CurrentColor.a, alpha, time).setEase(LeanTweenType.easeInSine).setOnUpdate(delegate (float value) {
+        alphaLTDescr= LeanTween.value(CurrentColor.a, alpha, time).setEase(LeanTweenType.easeInSine).setOnUpdate(delegate (float value) {
             image.color = new Color(CurrentColor.r, CurrentColor.g, CurrentColor.b, value);
-        }).setOnComplete(delegate () {
-            Displayvalue();
+        }).setOnComplete(delegate () {       
                CurrentColor = new Color(CurrentColor.r, CurrentColor.g, CurrentColor.b, alpha);
+            Displayvalue();
         });
     }
 
@@ -56,10 +57,17 @@ public class UIImageBase : MonoBehaviour {
         });
     }
 
+    public void cancelAlphaTween() {
+        LeanTween.cancel(alphaLTDescr.id);
+    }
+
     public virtual void ResetItem()
     {
         initialization();
     }
 
+    public virtual void OnAlphaComplete() {
+
+    }
 
 }

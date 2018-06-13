@@ -32,15 +32,15 @@ public class UITextBase : MonoBehaviour {
 		
 	}
 
-    public void ShowText(float time) {
+    public virtual void ShowText(float time) {
         ChangeTextAlpha(1, time, ()=> onDisplay =true);
     }
 
-    public void HideText(float time) {
+    public virtual void HideText(float time) {
         ChangeTextAlpha(0, time, () => onDisplay = false);
     }
 
-   public void ChangeTextAlpha(float alpha, float time, setDisplayValue Displayvalue) {
+   public void ChangeTextAlpha(float alpha, float time, setDisplayValue Displayvalue=null) {
         LeanTween.value(CurrentColor.a, alpha, time).setEase(LeanTweenType.easeInSine).setOnUpdate(delegate (float value) {
             text.color = new Color(CurrentColor.r, CurrentColor.g, CurrentColor.b, value);
         }).setOnComplete(delegate () {

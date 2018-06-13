@@ -22,7 +22,7 @@ public class NodeCtr : Ctr {
     public NodeRayCastImg nodeRayCastImg;
 
     //rotation value
-    private Vector3 DisplayPos = new Vector3(-300,0,0);
+    private Vector3 DisplayPos = new Vector3(-200,0,0);
     public Vector3 SlotPosition;
     public float vel;
     public float radiusX;
@@ -136,6 +136,8 @@ public class NodeCtr : Ctr {
         // shinkDown();
         HideDisplayObject(.2f);
         nodeRayCastImg.HideImage();
+
+
         displayObject.SetObjectAlpha(displayObject.meshRenderer, 0, .2f);
     }
 
@@ -154,7 +156,10 @@ public class NodeCtr : Ctr {
         GlowSpherel();
         //ScaleUp();
         nodeRayCastImg.ShowImage();
+     //   nodeRayCastImg.ShowAnimation();
+
         ShowDisplayObject(.2f);
+
         displayObject.SetObjectAlpha(displayObject.meshRenderer, 1, .2f);
     }
 
