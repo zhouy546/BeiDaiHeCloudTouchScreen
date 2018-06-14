@@ -28,8 +28,11 @@ public class NodeRayCastImg : UIImageBase {
         image.raycastTarget = b;
     }
 
-    public void ShowAnimation() {
-        this.transform.localScale = 1.1f * Vector3.one;
-        LeanTween.scale(this.gameObject, Vector3.one, .5f).setEase(LeanTweenType.easeOutQuad).setDelay(1.2f);
+    public void ScaleUp() {
+        LeanTween.scale(this.gameObject, 1.2f*Vector3.one, .5f).setEase(LeanTweenType.easeOutBounce);
+    }
+
+    public void ShinkDown() {
+        LeanTween.scale(this.gameObject, Vector3.one, .5f).setEase(LeanTweenType.easeInBounce);
     }
 }

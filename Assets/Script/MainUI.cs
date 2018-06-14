@@ -140,18 +140,20 @@ public class MainUI : MonoBehaviour {
         {
             loopRingCtr.ShowAll();
             leftSubTitleCtr.HideAll();
+            Debug.Log("nodeCtrs"+nodeCtrs.Count);
             foreach (var item in nodeCtrs)
             {
-             //   item.nodeRayCastImg.ShowImage();
-              //  item.ShowDisplayObject(.2f);
-                item.shinkDown();
+                //   item.nodeRayCastImg.ShowImage();
+                //  item.ShowDisplayObject(.2f);
+               item.shinkDown();
+                Debug.Log("reset to Loop");
                 item.SetAllImageAlpha(item.AllImage, 1f, .2f);
-
                 item.GlowAll();
             }
 
             HideRightBottomDescription();
             ToggleRightBottomDescriptionPlayAnim(true);
+            TurnOnAllNodeInteraction();
         }
     }
 
@@ -168,12 +170,24 @@ public class MainUI : MonoBehaviour {
             MainControler.instance.temp.nodeCtr.GlowAll();
             MainControler.instance.temp.nodeCtr.ScaleUp();
             loopRingCtr.HideAll();
+           HideNotSoloObj();
             ShowRightBottomDescription();
             ToggleRightBottomDescriptionPlayAnim(false);
-
             leftSubTitleCtr.ShowAll();
         }
     }
+
+    public void HideNotSoloObj() {
+        List<NodeCtr> tempList = new List<NodeCtr>();
+        tempList.AddRange(nodeCtrs);
+        tempList.Remove(MainControler.instance.temp.nodeCtr);
+        foreach (var item in tempList)
+        {
+            item.DimAll();
+        }
+        tempList.Clear();
+    }
+
     public void HideRightBottomDescription()
     {
         rightBottomDescriptionCtr.HideAll();

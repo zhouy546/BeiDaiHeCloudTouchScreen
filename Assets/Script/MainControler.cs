@@ -185,13 +185,13 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log("OnBeginDrag");
+        //Debug.Log("OnBeginDrag");
         client.StartPos = eventData.position;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Debug.Log("OnEndDrag");
+        //Debug.Log("OnEndDrag");
 
 
         client.EndPos = eventData.position;
@@ -215,7 +215,7 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
         }
 
 
-        Debug.Log("OnDrag");
+        //Debug.Log("OnDrag");
     }
 
     public void OnPointerDown(PointerEventData eventData)

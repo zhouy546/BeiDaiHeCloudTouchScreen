@@ -20,6 +20,8 @@ public class NodeCtr : Ctr {
     public DisplayObjectText displayObjectText;
     public Transform MidContent;
     public NodeRayCastImg nodeRayCastImg;
+    public RectTransform BlockMask;
+
 
     //rotation value
     private Vector3 DisplayPos = new Vector3(-200,0,0);
@@ -136,7 +138,7 @@ public class NodeCtr : Ctr {
         // shinkDown();
         HideDisplayObject(.2f);
         nodeRayCastImg.HideImage();
-
+        HideBlockMask();
 
         displayObject.SetObjectAlpha(displayObject.meshRenderer, 0, .2f);
     }
@@ -156,11 +158,19 @@ public class NodeCtr : Ctr {
         GlowSpherel();
         //ScaleUp();
         nodeRayCastImg.ShowImage();
-     //   nodeRayCastImg.ShowAnimation();
-
+        //   nodeRayCastImg.ShowAnimation();
+        ShowBlockMask();
         ShowDisplayObject(.2f);
 
         displayObject.SetObjectAlpha(displayObject.meshRenderer, 1, .2f);
+    }
+
+    public void HideBlockMask() {
+        BlockMask.gameObject.SetActive(false);
+    }
+
+    public void ShowBlockMask() {
+        BlockMask.gameObject.SetActive(true);
     }
 
     public void GlowLine()
@@ -197,6 +207,10 @@ public class NodeCtr : Ctr {
         IsInSpotlight = false;
     }
 
+
+
+
+
     public void ScaleUp() {
         if (!IsInSpotlight) {
             foreach (var item in AllImage)
@@ -210,6 +224,8 @@ public class NodeCtr : Ctr {
         }
         IsInSpotlight = true;
     }
+
+
 
     public void MoveToLocation(Vector3 pos) {
         LeanTween.moveLocal(this.gameObject, pos, 1f).setEase(LeanTweenType.easeInOutQuad);
@@ -294,8 +310,9 @@ public class NodeCtr : Ctr {
 
 
     IEnumerator initialization() {
-        SetUpNode();
         yield return new WaitForSeconds(.2f);
+        SetUpNode();
+
         CurrenSlot =Id;
         IsInSpotlight = true;
         isMoving = false;

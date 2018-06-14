@@ -13,13 +13,13 @@ public class TitleCtr : Ctr {
     }	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            ShowAll();
-        }
-        else if (Input.GetKeyDown(KeyCode.S)) {
-            HideAll();
-        }
+        //if (Input.GetKeyDown(KeyCode.A))
+        //{
+        //    ShowAll();
+        //}
+        //else if (Input.GetKeyDown(KeyCode.S)) {
+        //    HideAll();
+        //}
 	}
 
     public void HideAll() {

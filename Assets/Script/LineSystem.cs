@@ -14,22 +14,27 @@ public class LineSystem : MonoBehaviour {
 
     void Start () {
 
-        initialization();
+      StartCoroutine(  initialization());
     }
 
-    public void initialization()
+    IEnumerator initialization()
     {
-        Nodes = GetSphereNodesTrans();
+    
 
-        lengthOfLineRenderer = Nodes.Count * 2;
+
         lineRenderer.material = new Material(Shader.Find("Glow 11/Unity/Transparent/Cutout/Bumped Diffuse"));
         lineRenderer.widthMultiplier = 0.03f;
         lineRenderer.positionCount = lengthOfLineRenderer;
 
-        // A simple 2 color gradient with a fixed alpha of 1.0f.
-        DrawNodePos = NodePicker(Nodes, Nodes.Count - 1);
+
 
         RotateMySelf();
+        yield return new WaitForSeconds(.2f);
+
+        Nodes = GetSphereNodesTrans();
+        lengthOfLineRenderer = Nodes.Count * 2;
+        // A simple 2 color gradient with a fixed alpha of 1.0f.
+        DrawNodePos = NodePicker(Nodes, Nodes.Count - 1);
     }
 
 
@@ -58,7 +63,9 @@ public class LineSystem : MonoBehaviour {
         {
             lineRenderer.SetPosition(Nodes.Count + i, DrawNodePos[i].position);
         }
-        lineRenderer.SetPosition(Nodes.Count, Nodes[0].position);
+        if (Nodes.Count > 0) {
+            lineRenderer.SetPosition(Nodes.Count, Nodes[0].position);
+        }
     }
 
     List<Transform> NodePicker(List<Transform> itemList , int endNum) {
