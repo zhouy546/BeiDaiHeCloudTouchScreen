@@ -14,10 +14,10 @@ public class LineSystem : MonoBehaviour {
 
     void Start () {
 
-      StartCoroutine(  initialization());
+      //StartCoroutine(  initialization());
     }
 
-    IEnumerator initialization()
+    public  IEnumerator initialization()
     {
     
 

@@ -60,7 +60,7 @@ public class NodeCtr : Ctr {
 
     // Use this for initialization
     void Start () {
-      StartCoroutine(  initialization());
+      //StartCoroutine(  initialization());
     }
 
     // Update is called once per frame
@@ -309,14 +309,16 @@ public class NodeCtr : Ctr {
 
 
 
-    IEnumerator initialization() {
-        yield return new WaitForSeconds(.2f);
+   public IEnumerator initialization() {
+        yield return StartCoroutine(lineSystem.initialization());
+
         SetUpNode();
 
         CurrenSlot =Id;
         IsInSpotlight = true;
         isMoving = false;
         MoveToTargetEngle(MainUI.instance.NodeSlotAngle[CurrenSlot]);
+
     }
 
 }

@@ -185,42 +185,27 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        try
-        {
+
             Debug.Log("OnBeginDrag");
             client.StartPos = eventData.position;
-        }
-        catch (Exception)
-        {
-
-            throw;
-        }
 
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        try
-        {
+
             Debug.Log("OnEndDrag");
 
 
             client.EndPos = eventData.position;
             ismove = false;
-        }
-        catch (Exception)
-        {
-
-            throw;
-        }
 
 
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        try
-        {
+
             client.UpdatePos = eventData.position;
             client.EndPos = eventData.position;
 
@@ -236,12 +221,8 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
 
             Debug.Log("OnDrag");
-        }
-        catch (Exception)
-        {
 
-            throw;
-        }
+
   
     }
 
@@ -342,6 +323,11 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
         if (instance == null) {
             instance = this;
+        }
+
+        foreach (var item in mainUI.nodeCtrs)
+        {
+            StartCoroutine(item.initialization());
         }
 
         SetState(AppState.Looker);

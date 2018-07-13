@@ -51,8 +51,7 @@ public class MainUI : MonoBehaviour {
 
 
 
-
-   public IEnumerator SetupMainUI() {
+    public IEnumerator SetupMainUI() {
 
         yield return new WaitForSeconds(.2f);
         //设置Node
