@@ -107,7 +107,7 @@ public class NodeCtr : Ctr {
             lineSystem.setLineAlpha(1, .2f);
             sphereNodeCtr.GlowAllSpheres();
             ShowDisplayObject(.2f);
-            Debug.Log("show mainDisplay");
+            //Debug.Log("show mainDisplay");
         }
     }
 
@@ -278,7 +278,7 @@ public class NodeCtr : Ctr {
     }
 
     public void MoveToSoloPosition() {
-        Debug.Log("移动到Solo 位置");
+        //Debug.Log("移动到Solo 位置");
         MoveTo(this.gameObject,DisplayPos, 1f);
     }
 

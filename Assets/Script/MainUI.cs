@@ -53,6 +53,7 @@ public class MainUI : MonoBehaviour {
 
 
    public IEnumerator SetupMainUI() {
+
         yield return new WaitForSeconds(.2f);
         //设置Node
         foreach (var item in nodeCtrs)
@@ -122,7 +123,7 @@ public class MainUI : MonoBehaviour {
     {
         foreach (var item in nodeCtrs)
         {
-            Debug.Log("HideAllNode");
+            //Debug.Log("HideAllNode");
             //          item.HideText();
             item.DimAll();
             item.SetAllImageAlpha(item.AllImage, 0f, 0f);
@@ -140,13 +141,13 @@ public class MainUI : MonoBehaviour {
         {
             loopRingCtr.ShowAll();
             leftSubTitleCtr.HideAll();
-            Debug.Log("nodeCtrs"+nodeCtrs.Count);
+            //Debug.Log("nodeCtrs"+nodeCtrs.Count);
             foreach (var item in nodeCtrs)
             {
                 //   item.nodeRayCastImg.ShowImage();
                 //  item.ShowDisplayObject(.2f);
                item.shinkDown();
-                Debug.Log("reset to Loop");
+                //Debug.Log("reset to Loop");
                 item.SetAllImageAlpha(item.AllImage, 1f, .2f);
                 item.GlowAll();
             }

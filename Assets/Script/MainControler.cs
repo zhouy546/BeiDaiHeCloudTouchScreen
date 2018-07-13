@@ -107,7 +107,7 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
                 }
                 else {
-                    Debug.Log("normal move");
+                    //Debug.Log("normal move");
                     if (action != null)
                     {
                         action();
@@ -133,7 +133,7 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
             mainUI.ResttoLoop();//重新设置所有
             if (temp != null)
             {
-                Debug.Log("doing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+                //Debug.Log("doing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
 
                 temp.nodeCtr.MoveToSlotPosition(action);//先回原位，再移动slot
 
@@ -151,7 +151,7 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
             temp.nodeCtr.IsInSpotlight = true;
         }
 
-        Debug.Log("to Solo");
+        //Debug.Log("to Solo");
     }
 
     public void turnoffMovement() {
@@ -164,7 +164,7 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
     public void mMoveLeftEvent()
     {
-        Debug.Log("MoveLeft");
+        //Debug.Log("MoveLeft");
 
         if (MoveLeftEvent != null)
         {
@@ -174,7 +174,7 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
     public void mMoveRightEvent()
     {
-        Debug.Log("MoveRight");
+        //Debug.Log("MoveRight");
 
         if (MoveRightEvent != null)
         {
@@ -185,37 +185,64 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        //Debug.Log("OnBeginDrag");
-        client.StartPos = eventData.position;
+        try
+        {
+            Debug.Log("OnBeginDrag");
+            client.StartPos = eventData.position;
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        //Debug.Log("OnEndDrag");
+        try
+        {
+            Debug.Log("OnEndDrag");
 
 
-        client.EndPos = eventData.position;
-        ismove = false;
+            client.EndPos = eventData.position;
+            ismove = false;
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+
 
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        client.UpdatePos = eventData.position;
-        client.EndPos = eventData.position;
-
-        if (isUpDownDirection)
+        try
         {
-            MoveBehavior(MoveDirection(yAxisDis));
+            client.UpdatePos = eventData.position;
+            client.EndPos = eventData.position;
 
+            if (isUpDownDirection)
+            {
+                MoveBehavior(MoveDirection(yAxisDis));
+
+            }
+            else
+            {
+                MoveBehavior(MoveDirection(xAxisDis));
+            }
+
+
+            Debug.Log("OnDrag");
         }
-        else
+        catch (Exception)
         {
-            MoveBehavior(MoveDirection(xAxisDis));
+
+            throw;
         }
-
-
-        //Debug.Log("OnDrag");
+  
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -225,8 +252,9 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
         screenUnlocker.currentCountdownTime = screenUnlocker.countDownTime;
 
         string str = eventData.pointerCurrentRaycast.gameObject.name;
-     //   Debug.Log(str);
-        if (str == "UnlockTouchPad") {
+        //   Debug.Log(str);
+        if (str == "UnlockTouchPad")
+        {
             //解锁
             screenUnlocker.mBeginUnlockScreenEvent();
 
@@ -243,7 +271,7 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
         if (str == "NodeRayCastImg")
         {
             //显示SOLO模式
-             temp = eventData.pointerCurrentRaycast.gameObject.GetComponent<NodeRayCastImg>();
+            temp = eventData.pointerCurrentRaycast.gameObject.GetComponent<NodeRayCastImg>();
             SetState(AppState.Solo);
 
 
@@ -253,7 +281,7 @@ public class MainControler : MonoBehaviour, IPointerDownHandler, IBeginDragHandl
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        Debug.Log("OnPointerUp");
+        //Debug.Log("OnPointerUp");
 
     }
 

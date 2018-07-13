@@ -79,7 +79,7 @@ public class ScreenUnlocker : MonoBehaviour {
 
     public void minitilizeUnlockScreen()
     {
-        Debug.Log("唤醒屏保");
+        //Debug.Log("唤醒屏保");
 
         if (initilizeUnlockScreen != null)
         {
@@ -90,7 +90,7 @@ public class ScreenUnlocker : MonoBehaviour {
     //initialize event
     public void mBeginUnlockScreenEvent()
     {
-        Debug.Log("开始解锁屏幕被调用");
+        //Debug.Log("开始解锁屏幕被调用");
 
         if (BeginUnlockScreenEvent != null)
         {
@@ -101,7 +101,7 @@ public class ScreenUnlocker : MonoBehaviour {
 
     public void mEndUnlockScreenEvent()
     {
-        Debug.Log("结束解锁被调用");
+        //Debug.Log("结束解锁被调用");
 
         if (EndUnlockScreenEvent != null)
         {
@@ -112,7 +112,7 @@ public class ScreenUnlocker : MonoBehaviour {
 
     public void mInbetweenUnlockScreenEvent()
     {
-        Debug.Log("解锁中被调用");
+        //Debug.Log("解锁中被调用");
 
         if (EndUnlockScreenEvent != null)
         {
@@ -242,12 +242,12 @@ public class ScreenUnlocker : MonoBehaviour {
     }
 
     void mHideText() {
-        Debug.Log("隐藏文字");
+        //Debug.Log("隐藏文字");
         MovingText(UnlockScreenText, TextPosOffset, true, TextHideDelay);
     }
 
     void mShowText() {
-        Debug.Log("显示文字");
+        //Debug.Log("显示文字");
         UnlockScreenText.text = UnlockText[1];
         MovingText(UnlockScreenText, TextPosOffset, false);
     }
