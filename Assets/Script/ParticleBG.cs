@@ -5,6 +5,7 @@ using UnityEngine;
 public class ParticleBG : MonoBehaviour {
   public  AnimationCurve curveRIGHT;
     public AnimationCurve curveLEFT;
+    public AnimationCurve IdleCurve;
 
 
 
@@ -71,7 +72,10 @@ public class ParticleBG : MonoBehaviour {
             LeanTween.value(to, .1f, time).setOnUpdate(delegate (float val)
             {
                 lm.limitX = val;
+            }).setOnComplete(delegate () {
+                var ex = ps.velocityOverLifetime;
+                ex.x = new ParticleSystem.MinMaxCurve(1, IdleCurve);
             });
-        }) ;
+        });
     }
 }

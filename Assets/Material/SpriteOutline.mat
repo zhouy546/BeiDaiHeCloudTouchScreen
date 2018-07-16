@@ -84,5 +84,5 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _OutlineColor: {r: 1.2415497, g: 1.5293262, b: 2.0966568, a: 2.0966568}
+    - _OutlineColor: {r: 1.4145944, g: 1.7424805, b: 2.3888845, a: 2.3888845}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
